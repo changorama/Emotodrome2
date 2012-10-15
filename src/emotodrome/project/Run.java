@@ -56,10 +56,7 @@ public class Run extends Activity {
 	private boolean spawnerToggle, shouldGetImage, shouldUpdateData;
 	private int updatedCount;
 	private boolean optionsVisible = false;
-	
 
-	
-	
 	//Variables for sound control
 	private boolean volcontrolVisible = false;
 	
@@ -88,11 +85,14 @@ public class Run extends Activity {
 		
 		
 		// Background music load 
-		mp = new MediaPlayer();   //Create Mediaplayer object 
+		//mp = new MediaPlayer();   //Create Mediaplayer object 
 		//mp = MediaPlayer.create(getBaseContext(), R.raw.substancesuperslow);
-
+		mp = MediaPlayer.create(getBaseContext(), R.raw.djmax);
+		
 		//mp.setDataSource();
 		//mp.prepare();
+		mp.seekTo(0);
+		
 		mp.setLooping(true);
 		mp.start();
 		
@@ -124,7 +124,7 @@ public class Run extends Activity {
 		GLSurfaceView glView = (GLSurfaceView) findViewById(R.id.surfaceview);
 		openGLRenderer = new OpenGLRenderer(this, glView, backend);
 		//imageView = (ImageView)findViewById(R.id.image);
-		//Bitmap bm = BitmapFactory.decodeFile(backend.getImagePath());
+		//Bitmap bm3 = BitmapFactory.decodeFile(backend.getImagePath());
 		//imageView.setImageBitmap(bm);
 		
 		/*new Thread(new Runnable(){
@@ -149,6 +149,7 @@ public class Run extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		mp.start();
 		//openGLRenderer.onResume();
 	}
 	
@@ -176,8 +177,19 @@ public class Run extends Activity {
 	protected void onPause() {
 		super.onPause();
 		spawnerToggle = false;
+		mp.pause();
 		//openGLRenderer.onPause();
 	}
+	@Override
+	protected void onStart(){
+		super.onStart();
+		mp.start();
+	}
+	@Override
+	//protected void onStop(){
+	//	super.onStop();
+		//spawnerToggle = false;
+	//}
 	
 	//create options menu
 	public boolean onCreateOptionsMenu(Menu menu) {
