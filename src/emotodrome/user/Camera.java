@@ -18,14 +18,14 @@ public class Camera {
 	private String rotatorP = "";	//up and down turning
 	private String rotatorR = "";	//right and left turning
 	private LocatorLine northLine;
-	
+									 
 	public Camera(){
-		eye = new Vec3(0, 0, 1);
-		persp = new Vec3(0, 0, -1);
-		up = new Vec3(0, 1, 0);
-		latLon = new Vec3(0, 0, 0);
-		moveAmount = new Vec3(0, 0, 0);
-	}
+		eye = new Vec3(0, 0, 1);             // Where is the camera in the world             
+		persp = new Vec3(0, 0, -1);          // where it is looking ! "Direction" 
+		up = new Vec3(0, 1, 0);              // up vector -> rotate, -1 : Reverse , filps up and down ? 
+		latLon = new Vec3(0, 0, 0);          // Latitude and Longitude 
+		moveAmount = new Vec3(0, 0, 0);      // 
+	}  
 	
 	public Camera(Vec3 eye, Vec3 latLon){
 		this.eye = eye;

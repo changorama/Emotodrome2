@@ -38,9 +38,7 @@ import android.view.GestureDetector.OnGestureListener;
  */
 public class OpenGLRenderer implements Renderer, OnGestureListener, SensorEventListener {
 	public GL10 mygl;
-
 	private Backend backend;
-	
 	private HashMap<Integer, User> users;	//keys are user ids that map to a user currently connected to the server
 	private int num_users = 0;
 	private HashMap<Vec3, Float> iceData; 	//keys are a vector representing the lat/lon location of the ice and map to a float representing the amount of ice at this location
@@ -121,6 +119,11 @@ public class OpenGLRenderer implements Renderer, OnGestureListener, SensorEventL
 	
 	private Mesh pyrite;
 	private Mesh circleWave;
+	
+	private Mesh circleWave2;   //Additional circlewave
+	private Mesh hugecircleWave; // Additional circlewave for testing 
+	
+	
 	private Mesh triangleOrigami;
 	private AnchoredBezier anchoredBezier;
 	
@@ -248,9 +251,22 @@ public class OpenGLRenderer implements Renderer, OnGestureListener, SensorEventL
 		
 		r = new Random();
 		pyrite = new Pyrite(.5f, .5f, .5f, r);
-		circleWave = new CircleWave(4, .01f, .1f, 1f, .01f, .1f, 0f, 2f, new float[] {0,0,0,1}, new float[]{0,1,0,1});
-		circleWave.x = -10;
+		circleWave = new CircleWave(4, .01f, .1f, 1f, .01f, .1f, 0f, 2f, new float[] {0,0,0,1}, new float[]{0,1,0,1}); //Near where the user shows up ? 
+		circleWave.x = -10;  //relative to origin of where you started 
 		circleWave.z = 3;
+		
+		
+		//Circle wave second 
+		circleWave2 = new CircleWave(4,.01f, .1f, 1f, .01f, .1f, 0f, 2f, new float[] {0,0,0,1}, new float[]{0,1,0,1});
+		circleWave2.x = + 50;
+		circleWave2.z = 3;
+		
+		//Circle wave Magnified one
+		hugecircleWave = new CircleWave(8,.04f, .1f, 1f, .01f, .1f, 0f, 2f, new float[] {0,0,0,1}, new float[]{2.5f,0,0,1});
+		hugecircleWave.x = -20;
+		hugecircleWave.z = 3;
+		
+		
 		triangleOrigami = new TriangleOrigami(new Vec3(10, 0, 10), new Vec3(11, 1, 11), new Vec3(13, 0, 10.5f), r);
 		anchoredBezier = new AnchoredBezier(2, 0, 20, 0, 2, 1, 10);
 				
@@ -441,6 +457,8 @@ public class OpenGLRenderer implements Renderer, OnGestureListener, SensorEventL
 		closestIce.draw(gl);
 		gl.glPopMatrix();
 		
+		
+		
 //		gl.glPushMatrix();
 //		anchoredBezier.draw(gl);
 //		gl.glPopMatrix();
@@ -453,10 +471,21 @@ public class OpenGLRenderer implements Renderer, OnGestureListener, SensorEventL
 		circleWave.draw(gl);
 		gl.glPopMatrix();
 		
+		
+		gl.glPushMatrix();
+		circleWave2.draw(gl);
+		gl.glPopMatrix();
+		
+		gl.glPushMatrix();
+		hugecircleWave.draw(gl);  // Draw and pop 
+		gl.glPopMatrix();
+		
+		
 		gl.glPushMatrix();
 		triangleOrigami.draw(gl);
 		gl.glPopMatrix();
 
+		
 	}		
 
 	/**
@@ -762,7 +791,6 @@ public class OpenGLRenderer implements Renderer, OnGestureListener, SensorEventL
 						u.discovered = true;
 					}
 				}
-				
 			}
 			newUsers = false;
 		}
