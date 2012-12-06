@@ -17,6 +17,7 @@ import emotodrome.mesh.*;
 import emotodrome.user.Camera;
 import emotodrome.user.User;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -29,6 +30,14 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.TouchDelegate;
 import android.view.GestureDetector.OnGestureListener;
+
+// added up on Dec 2012 by Dohwee Kim. 
+// for testing distance 
+import android.app.Activity;
+import android.graphics.Color;
+import android.os.Bundle;
+import android.widget.TextView;
+import android.media.*;
 
 /**
  * This class handles the rendering of the opengl window. This is where anything you want to draw will go.  Objects that will be drawn should be initialized in the constructor
@@ -75,12 +84,21 @@ public class OpenGLRenderer implements Renderer, OnGestureListener, SensorEventL
 	
 	private boolean light = true;			//is light enabled
 	public boolean locating = false;
+	
+	
+	public int bellsound1;
+	
+	// Read and load sound files on OpenGL renederer
+	//SoundManager snd1;
+	//snd1 = new SoundManager(context); 
+	//bellsound1 = snd1.load(R.raw.gong_burmese);
+	
 
 	/* 
 	 * The initial light values for ambient and diffuse
 	 * as well as the light position 
 	 */
-	private float[] lightAmbient = {0.5f, 0.5f, 0.5f, 1.0f};
+	private float[] lightAmbient = {0.5f, 0.5f, 0.5f, 0.6f};
 	private float[] lightDiffuse = {1.0f, 1.0f, 1.0f, 1.0f};
 	private float[] lightSpecular = {0.5f, 1.0f, 0.5f, 1.0f};
 	private float[] lightPosition = {0.0f, 2.0f, 2.0f, 1.0f};
@@ -315,6 +333,7 @@ public class OpenGLRenderer implements Renderer, OnGestureListener, SensorEventL
 		//nicest perspective calculations
 		gl.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST); 
 		
+		
 		//get images from backend for maps
 		for (int i = 0; i < NUMMAPIMAGES; i++){
 			updateMapTextures(backend.getImagePath() + "/" + i + backend.getImageName(i), i);
@@ -349,10 +368,31 @@ public class OpenGLRenderer implements Renderer, OnGestureListener, SensorEventL
 		} else {
 			gl.glDisable(GL10.GL_LIGHTING);
 		}
+		
 		Vec3 currentRatio = ((MapTile)mapgroup.get(CENTERINDEX)).getRatio();
+		
 		camera.moveCamera(speed, currentRatio);													//move camera
+		
 		if (camera.getMoveForward() == true){
 			backend.updateUserLocation(camera.getMoveAmount());							//if we have moved, update the server
+			
+			// Checking camera , object coordinates here
+			// int userX = camera.
+			//float userX = camera.getEyeX();
+			//float userY = camera.getEyeY();
+			//float userZ = camera.getEyeZ();
+			
+			// How many object do we have now ? 
+			double distance_hugeWave = camera.getEye().distance(hugecircleWave.getPosition());
+			//double distance_hugeWave = camera.getEye().distance(hugecircleWave.getPosition());
+			if (distance_hugeWave < 10.0){
+				//Bitmap bitmap = Bitmap.createBitmap(256,256, Bitmap.Config.ARGB_4444);
+				//Canvas canvas = new Canvas(bitmap);
+				// do something ...
+				
+				
+			}
+			
 		}
 		
 		//if new users have logged on, start a new user thread
@@ -374,7 +414,9 @@ public class OpenGLRenderer implements Renderer, OnGestureListener, SensorEventL
 				}
 				
 			}).start();
+
 		}
+		
 		else if (camera.getEyeZ() > mapMoveBackward){
 			mapMoveBackward += MAPHEIGHT;
 			new Thread(new Runnable(){
@@ -382,9 +424,9 @@ public class OpenGLRenderer implements Renderer, OnGestureListener, SensorEventL
 				public void run(){
 					onMapMoveBackward();
 				}
-				
 			}).start();
 		}
+		
 		if (camera.getEyeX() > mapMoveRight){
 			mapMoveRight += MAPWIDTH;
 			new Thread(new Runnable(){
@@ -456,17 +498,7 @@ public class OpenGLRenderer implements Renderer, OnGestureListener, SensorEventL
 		gl.glPushMatrix();
 		closestIce.draw(gl);
 		gl.glPopMatrix();
-		
-		
-		
-//		gl.glPushMatrix();
-//		anchoredBezier.draw(gl);
-//		gl.glPopMatrix();
-
-//		gl.glPushMatrix();
-//		pyrite.draw(gl);
-//		gl.glPopMatrix();
-		
+	
 		gl.glPushMatrix();
 		circleWave.draw(gl);
 		gl.glPopMatrix();
