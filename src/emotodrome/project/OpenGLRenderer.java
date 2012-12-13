@@ -43,7 +43,7 @@ import android.media.*;
  * This class handles the rendering of the opengl window. This is where anything you want to draw will go.  Objects that will be drawn should be initialized in the constructor
  * and drawn in onDrawFrame. Texturing is done in onSurfaceCreated.
  * 
- * @author Luke Fowlie
+ * @author Luke Fowlie , Dohwee Kim 
  */
 public class OpenGLRenderer implements Renderer, OnGestureListener, SensorEventListener {
 	public GL10 mygl;
@@ -86,7 +86,9 @@ public class OpenGLRenderer implements Renderer, OnGestureListener, SensorEventL
 	public boolean locating = false;
 	
 	
-	public int bellsound1;
+	public SoundPool sp; // for bell sound 
+	public int bellsound1;  // for sound testing 
+	public boolean soundSignal = false;
 	
 	// Read and load sound files on OpenGL renederer
 	//SoundManager snd1;
@@ -291,6 +293,15 @@ public class OpenGLRenderer implements Renderer, OnGestureListener, SensorEventL
 		new Thread(new IceThread()).start();
 		locateThread = new Thread(new FindClosest());
 		
+		
+		//intionalize sound 
+		//snd = new SoundManager(getApplication());
+		sp = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);  //generate sound pool
+		//bellsound1 = sp.load(this.context(), R.raw.gong_burmese, 1 );
+		bellsound1 = sp.load("./res/raw/gong_burmese.wav" , 1);
+		
+		
+		//
 		System.out.println("renderer setup done");
 	}
 
@@ -384,15 +395,25 @@ public class OpenGLRenderer implements Renderer, OnGestureListener, SensorEventL
 			
 			// How many object do we have now ? 
 			double distance_hugeWave = camera.getEye().distance(hugecircleWave.getPosition());
+			double distance_Wave = camera.getEye().distance(circleWave.getPosition());
 			//double distance_hugeWave = camera.getEye().distance(hugecircleWave.getPosition());
-			if (distance_hugeWave < 10.0){
+			if (distance_hugeWave < 10.0){  // if distance is less than 10 
 				//Bitmap bitmap = Bitmap.createBitmap(256,256, Bitmap.Config.ARGB_4444);
 				//Canvas canvas = new Canvas(bitmap);
 				// do something ...
+				soundSignal = true;
+			}
+			else{
+				soundSignal = false;
+			}
 				
-				
+			// if the signal indicates closing, 
+			// play sound 
+			if (soundSignal){   // if soundSignal turned on 
+				sp.play(bellsound1, 1, 1, 0, 0, 1);
 			}
 			
+						
 		}
 		
 		//if new users have logged on, start a new user thread
