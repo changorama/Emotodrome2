@@ -37,7 +37,7 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.TextView;
-import android.media.*;
+import android.media.*;  // For sound play 
 
 /**
  * This class handles the rendering of the opengl window. This is where anything you want to draw will go.  Objects that will be drawn should be initialized in the constructor
@@ -86,9 +86,10 @@ public class OpenGLRenderer implements Renderer, OnGestureListener, SensorEventL
 	public boolean locating = false;
 	
 	
-	public SoundPool sp; // for bell sound 
+	public SoundPool sounds; // for bell sound 
 	public int bellsound1;  // for sound testing 
 	public boolean soundSignal = false;
+	public String path = "/Music/gong_burmese.wav";
 	
 	// Read and load sound files on OpenGL renederer
 	//SoundManager snd1;
@@ -295,12 +296,10 @@ public class OpenGLRenderer implements Renderer, OnGestureListener, SensorEventL
 		
 		
 		//intionalize sound 
-		//snd = new SoundManager(getApplication());
-		sp = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);  //generate sound pool
-		//bellsound1 = sp.load(this.context(), R.raw.gong_burmese, 1 );
-		bellsound1 = sp.load("./res/raw/gong_burmese.wav" , 1);
 		
-		
+		sounds = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);  //generate sound pool
+		bellsound1 = sounds.load(this.context, R.raw.gong_burmese , 1);
+		//bellsound1 = sounds.load(path, 1); 
 		//
 		System.out.println("renderer setup done");
 	}
@@ -410,7 +409,7 @@ public class OpenGLRenderer implements Renderer, OnGestureListener, SensorEventL
 			// if the signal indicates closing, 
 			// play sound 
 			if (soundSignal){   // if soundSignal turned on 
-				sp.play(bellsound1, 1, 1, 0, 0, 1);
+				sounds.play(bellsound1, 1, 1, 0, 0, 1);
 			}
 			
 						
