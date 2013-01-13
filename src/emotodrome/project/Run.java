@@ -87,12 +87,11 @@ public class Run extends Activity {
 		// Background music load 
 		//mp = new MediaPlayer();   //Create Mediaplayer object 
 		//mp = MediaPlayer.create(getBaseContext(), R.raw.substancesuperslow);
-		mp = MediaPlayer.create(getBaseContext(), R.raw.djmax);
+		mp = MediaPlayer.create(getBaseContext(), R.raw.substancesuperslow);
 		
 		//mp.setDataSource();
 		//mp.prepare();
-		mp.seekTo(0);
-		
+		//mp.seekTo(0);
 		mp.setLooping(true);
 		mp.start();
 		

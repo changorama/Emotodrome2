@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Queue;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -26,6 +28,7 @@ import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.opengl.GLSurfaceView.Renderer;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.TouchDelegate;
@@ -88,9 +91,18 @@ public class OpenGLRenderer implements Renderer, OnGestureListener, SensorEventL
 	
 	public SoundPool sounds; // for bell sound 
 	public int bellsound1;  // for sound testing 
-	public boolean soundSignal = false;
-	public String path = "/Music/gong_burmese.wav";
+	public boolean bellsoundSignal = false;
+	public int playingRate = 1000;
 	
+	public int bowla1; 
+	public String ThreadMSG = "MYMSG";
+	// For Sound delay 
+	public class soundTask extends TimerTask{
+		@Override
+		public void run(){
+			bellsoundSignal = false;
+		}
+	}
 	// Read and load sound files on OpenGL renederer
 	//SoundManager snd1;
 	//snd1 = new SoundManager(context); 
@@ -148,6 +160,9 @@ public class OpenGLRenderer implements Renderer, OnGestureListener, SensorEventL
 	private Mesh triangleOrigami;
 	private AnchoredBezier anchoredBezier;
 	
+	private Timer soundtimer; // for sound playing rate 
+	
+	
 	/**
 	 * constructor initializes the view we will render in, sets up sensors we will use, initializes our light/fog buffers, and initializes 
 	 * all objects that will be drawn initially
@@ -157,6 +172,9 @@ public class OpenGLRenderer implements Renderer, OnGestureListener, SensorEventL
 		
 		this.context = context;		
 		this.backend = backend;
+		
+		
+		
 		
 		Rect bounds = new Rect();
 		view.getHitRect(bounds);
@@ -299,8 +317,14 @@ public class OpenGLRenderer implements Renderer, OnGestureListener, SensorEventL
 		
 		sounds = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);  //generate sound pool
 		bellsound1 = sounds.load(this.context, R.raw.gong_burmese , 1);
+
+		bowla1 = sounds.load(this.context, R.raw.bowla_emoto,1);
 		//bellsound1 = sounds.load(path, 1); 
 		//
+		//new Thread(new soundThread()).setDaemon(true);
+		
+		
+		
 		System.out.println("renderer setup done");
 	}
 
@@ -396,23 +420,30 @@ public class OpenGLRenderer implements Renderer, OnGestureListener, SensorEventL
 			double distance_hugeWave = camera.getEye().distance(hugecircleWave.getPosition());
 			double distance_Wave = camera.getEye().distance(circleWave.getPosition());
 			//double distance_hugeWave = camera.getEye().distance(hugecircleWave.getPosition());
-			if (distance_hugeWave < 10.0){  // if distance is less than 10 
+			if (distance_hugeWave > 10.0 && distance_hugeWave < 20.0 ){  // if distance is less than 10 
 				//Bitmap bitmap = Bitmap.createBitmap(256,256, Bitmap.Config.ARGB_4444);
 				//Canvas canvas = new Canvas(bitmap);
 				// do something ...
-				soundSignal = true;
+				playingRate = 2000;
+				new Thread(new soundThread()).start();
+				//Thread
+			}
+			else if (distance_hugeWave < 10.0 ){  // if distance is less than 10
+				playingRate = 500;
+				new Thread(new soundThread()).start();
+				//Thread
 			}
 			else{
-				soundSignal = false;
-			}
 				
+			}
+			//else{
+			//	bellsoundSignal = false;
+			//}
 			// if the signal indicates closing, 
 			// play sound 
-			if (soundSignal){   // if soundSignal turned on 
-				sounds.play(bellsound1, 1, 1, 0, 0, 1);
-			}
-			
-						
+			//if (bellsoundSignal){   // if soundSignal turned on 
+			//	sounds.play(bellsound1, 1, 1, 0, 0, 1);
+			//}		
 		}
 		
 		//if new users have logged on, start a new user thread
@@ -847,6 +878,29 @@ public class OpenGLRenderer implements Renderer, OnGestureListener, SensorEventL
 			newUsers = false;
 		}
 	}
+	
+	public class soundThread extends Thread{
+		@Override
+		public void run(){
+			TimerProcess();
+		}
+	}
+	
+	private void TimerProcess()
+	{
+		try{
+			if (bellsoundSignal == false){
+				bellsoundSignal = true;
+				sounds.play(bellsound1, 1, 1, 0, 0, 1);
+				soundThread.sleep(playingRate);
+				
+				bellsoundSignal = false;
+			}
+		}
+		catch(InterruptedException e){
+		}
+	}
+	
 	
 	//thread to find the closest ice point
 	private class FindClosest implements Runnable{
