@@ -87,7 +87,7 @@ public class Run extends Activity {
 		// Background music load 
 		//mp = new MediaPlayer();   //Create Mediaplayer object 
 		//mp = MediaPlayer.create(getBaseContext(), R.raw.substancesuperslow);
-		mp = MediaPlayer.create(getBaseContext(), R.raw.substancesuperslow);
+		mp = MediaPlayer.create(getBaseContext(), R.raw.bowla_emoto);
 		
 		//mp.setDataSource();
 		//mp.prepare();
@@ -118,7 +118,6 @@ public class Run extends Activity {
 		seekvolbar.setOnSeekBarChangeListener(barChange);
 		
 		//soundEffects = new SoundPool(5, AudioManager.STREAM_MUSIC, 100);
-	
 		
 		GLSurfaceView glView = (GLSurfaceView) findViewById(R.id.surfaceview);
 		openGLRenderer = new OpenGLRenderer(this, glView, backend);

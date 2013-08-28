@@ -103,6 +103,12 @@ public class OpenGLRenderer implements Renderer, OnGestureListener, SensorEventL
 			bellsoundSignal = false;
 		}
 	}
+	
+	
+	public int iceBergamount = 100;
+	public int itr;
+	
+	
 	// Read and load sound files on OpenGL renederer
 	//SoundManager snd1;
 	//snd1 = new SoundManager(context); 
@@ -119,7 +125,6 @@ public class OpenGLRenderer implements Renderer, OnGestureListener, SensorEventL
 	private float[] lightPosition = {0.0f, 2.0f, 2.0f, 1.0f};
 	
 	private float[] light1Position = {0.0f, 1.0f, 0.0f, 1.0f};
-	
 	private float[] light2Position = {0.0f, -1.0f, 0.0f, 1.0f};
 	
 	//rgb is 181 208 209
@@ -155,6 +160,11 @@ public class OpenGLRenderer implements Renderer, OnGestureListener, SensorEventL
 	
 	private Mesh circleWave2;   //Additional circlewave
 	private Mesh hugecircleWave; // Additional circlewave for testing 
+	
+	
+	// Modified Aug 28th 2013 by Dohwee Kim
+	//private Mesh[] icebergs = new Mesh[100];    //Mesh array to hold 100 icebergs
+	private Mesh icebergs;
 	
 	
 	private Mesh triangleOrigami;
@@ -304,6 +314,20 @@ public class OpenGLRenderer implements Renderer, OnGestureListener, SensorEventL
 		hugecircleWave = new CircleWave(8,.04f, .1f, 1f, .01f, .1f, 0f, 2f, new float[] {0,0,0,1}, new float[]{2.5f,0,0,1});
 		hugecircleWave.x = -20;
 		hugecircleWave.z = 3;
+		
+		
+		icebergs = new Iceberg(15f, 15f, 15f);  // width , height, 
+		icebergs.x = +10;
+		icebergs.y = 1;
+		icebergs.z = 10;
+		//creating snow boxes ... 
+		//for(itr=0 ; itr<100;itr++){
+		//	icebergs[itr] = new Cube(.2f,.2f,.2f);
+		//	icebergs[itr].x = 55;
+		//	icebergs[itr].y = .1f;
+		//	icebergs[itr].z = 0;
+		//}
+		
 		
 		
 		triangleOrigami = new TriangleOrigami(new Vec3(10, 0, 10), new Vec3(11, 1, 11), new Vec3(13, 0, 10.5f), r);
